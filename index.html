@@ -146,39 +146,9 @@
             font-size: 1.2rem;
             margin-bottom: 15px;
             font-weight: 500;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .username:hover {
-            background: rgba(255, 255, 255, 0.1);
         }
 
         body.light-theme .username {
-            color: #333;
-        }
-
-        body.light-theme .username:hover {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .username-input {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            color: white;
-            padding: 4px 8px;
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-            width: 120px;
-        }
-
-        body.light-theme .username-input {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.3);
             color: #333;
         }
 
@@ -339,13 +309,13 @@
             cursor: pointer;
             transition: all 0.2s;
             margin-right: 10px;
-            background: #2d2d2d;
+            background: #2d2d2d; /* Серый фон для темной темы */
             position: relative;
             overflow: hidden;
         }
 
         body.light-theme .start-button {
-            background: #f0f0f0;
+            background: #f0f0f0; /* Светло-серый фон для светлой темы */
         }
 
         .start-button:hover {
@@ -908,21 +878,6 @@
                 radial-gradient(circle at 30% 30%, #2196f3, transparent 50%),
                 radial-gradient(circle at 70% 70%, #03a9f4, transparent 50%);
             box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
-        }
-
-        .menu-username {
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .menu-username:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        body.light-theme .menu-username:hover {
-            background: rgba(0, 0, 0, 0.1);
         }
 
         .lock-button {
@@ -1490,8 +1445,8 @@
         <div class="lock-date" id="lockDate">Понедельник, 1 января</div>
         
         <div class="login-form">
-            <div class="user-avatar" id="lockAvatar">EXC</div>
-            <div class="username" id="lockUsername" onclick="editUsername('lock')">exc</div>
+            <div class="user-avatar">EXC</div>
+            <div class="username">exc</div>
             <input type="password" class="password-input" id="passwordInput" placeholder="Введите пароль" onkeypress="handlePasswordKeypress(event)">
             <button class="login-button" onclick="login()">Войти</button>
             <div class="error-message" id="errorMessage">Неверный пароль. Попробуйте снова.</div>
@@ -1578,8 +1533,8 @@
             </div>
             
             <div class="user-profile">
-                <div class="user-profile-avatar" id="menuAvatar">EXC</div>
-                <span class="menu-username" id="menuUsername" onclick="editUsername('menu')">exc</span>
+                <div class="user-profile-avatar">EXC</div>
+                <span>exc</span>
             </div>
             
             <div class="lock-button" onclick="lockScreen()">
@@ -1744,7 +1699,6 @@
             initCursorEffect();
             updateCalendar();
             initDraggableWindows();
-            loadUsername();
         }
 
         // Эффект следования за курсором с разной скоростью
@@ -1790,79 +1744,6 @@
         
         setInterval(updateDesktopTime, 1000);
         updateDesktopTime();
-
-        // Функции для работы с ником
-        function loadUsername() {
-            const savedUsername = localStorage.getItem('pyroUsername');
-            const savedAvatar = localStorage.getItem('pyroAvatar');
-            
-            if (savedUsername) {
-                document.getElementById('lockUsername').textContent = savedUsername;
-                document.getElementById('menuUsername').textContent = savedUsername;
-            }
-            
-            if (savedAvatar) {
-                document.getElementById('lockAvatar').textContent = savedAvatar;
-                document.getElementById('menuAvatar').textContent = savedAvatar;
-            }
-        }
-
-        function editUsername(location) {
-            const usernameElement = document.getElementById(location === 'lock' ? 'lockUsername' : 'menuUsername');
-            const currentUsername = usernameElement.textContent;
-            
-            // Создаем input для редактирования
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'username-input';
-            input.value = currentUsername;
-            input.maxLength = 15;
-            
-            // Заменяем отображение на input
-            usernameElement.style.display = 'none';
-            usernameElement.parentNode.insertBefore(input, usernameElement.nextSibling);
-            
-            // Фокус и выделение текста
-            input.focus();
-            input.select();
-            
-            // Сохранение при потере фокуса или нажатии Enter
-            function saveUsername() {
-                const newUsername = input.value.trim();
-                
-                if (newUsername && newUsername !== currentUsername) {
-                    // Сохраняем новое имя
-                    document.getElementById('lockUsername').textContent = newUsername;
-                    document.getElementById('menuUsername').textContent = newUsername;
-                    
-                    // Обновляем аватар (первые 3 символа)
-                    const avatarText = newUsername.substring(0, 3).toUpperCase();
-                    document.getElementById('lockAvatar').textContent = avatarText;
-                    document.getElementById('menuAvatar').textContent = avatarText;
-                    
-                    // Сохраняем в localStorage
-                    localStorage.setItem('pyroUsername', newUsername);
-                    localStorage.setItem('pyroAvatar', avatarText);
-                }
-                
-                // Восстанавливаем отображение
-                input.remove();
-                usernameElement.style.display = 'block';
-                
-                // Удаляем обработчики событий
-                input.removeEventListener('blur', saveUsername);
-                input.removeEventListener('keypress', handleKeypress);
-            }
-            
-            function handleKeypress(e) {
-                if (e.key === 'Enter') {
-                    saveUsername();
-                }
-            }
-            
-            input.addEventListener('blur', saveUsername);
-            input.addEventListener('keypress', handleKeypress);
-        }
 
         // Календарь с праздниками и навигацией - ВСЕГДА показывает текущую дату
         let currentCalendarDate = new Date();
@@ -2633,7 +2514,6 @@
             resetCalculator();
             loadNote();
             initDraggableWindows();
-            loadUsername();
         });
     </script>
 </body>
